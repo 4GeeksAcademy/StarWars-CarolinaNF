@@ -1,32 +1,37 @@
-export const initialStore=()=>{
-  return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
+const getState = ({ getStore, setStore }) => {
+  return {
+    store: {
+      people: [],
+      planets: [],
+      vehicles: [],
+      favorites: [],
+    },
+    actions: {
+      getPeople: () => {
+        fetch("https://www.swapi.tech/api/people")
+          .then(res => res.json())
+          .then(data => setStore({ people: data.results || [] }));
       },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
+      getPlanets: () => {
+        fetch("https://www.swapi.tech/api/planets")
+          .then(res => res.json())
+          .then(data => setStore({ planets: data.results || [] }));
+      },
+      getVehicles: () => {
+        fetch("https://www.swapi.tech/api/vehicles")
+          .then(res => res.json())
+          .then(data => setStore({ vehicles: data.results || [] }));
+      },
+      addFavorite: (name) => {
+        const store = getStore();
+        if (!store.favorites.includes(name)) setStore({ favorites: [...store.favorites, name] });
+      },
+      removeFavorite: (name) => {
+        const store = getStore();
+        setStore({ favorites: store.favorites.filter(item => item !== name) });
       }
-    ]
+    }
   }
 }
 
-export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'add_task':
-
-      const { id,  color } = action.payload
-
-      return {
-        ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
-      };
-    default:
-      throw Error('Unknown action.');
-  }    
-}
+export default getState;
