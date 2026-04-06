@@ -14,14 +14,15 @@ export const Single = () => {
 
   useEffect(() => {
     fetch(`https://www.swapi.tech/api/${type}/${id}`)
-      .then(res => res.json())
-      .then(result => setData(result.result?.properties || {}))
-      .catch(() => setData({}));
+      .then((res) => res.json())
+      .then((result) => setData(result.result?.properties || {}))
+      .catch((error) => {
+        console.log("Error loading single:", error);
+        setData({});
+      });
   }, [type, id]);
 
   if (!data) return <h1 className="text-center mt-5">Loading...</h1>;
-
-  const { name="Unknown", height="N/A", mass="N/A", hair_color="N/A", eye_color="N/A", gender="N/A" } = data;
 
   return (
     <div className="container mt-5">
@@ -30,18 +31,45 @@ export const Single = () => {
           <img
             src={getImageURL(type, id)}
             className="img-fluid"
-            onError={(e) => e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg"}
+            alt={data.name || "Star Wars"}
+            onError={(e) => {
+              e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
+            }}
           />
         </div>
+
         <div className="col-md-6">
-          <h1>{name}</h1>
-          <div className="row text-danger text-center mt-4">
-            <div className="col"><p>Height</p><p>{height}</p></div>
-            <div className="col"><p>Mass</p><p>{mass}</p></div>
-            <div className="col"><p>Hair</p><p>{hair_color}</p></div>
-            <div className="col"><p>Eyes</p><p>{eye_color}</p></div>
-            <div className="col"><p>Gender</p><p>{gender}</p></div>
-          </div>
+          <h1>{data.name || "Unknown"}</h1>
+
+          {type === "people" && (
+            <div className="row text-danger text-center mt-4">
+              <div className="col"><p>Height</p><p>{data.height || "N/A"}</p></div>
+              <div className="col"><p>Mass</p><p>{data.mass || "N/A"}</p></div>
+              <div className="col"><p>Hair</p><p>{data.hair_color || "N/A"}</p></div>
+              <div className="col"><p>Eyes</p><p>{data.eye_color || "N/A"}</p></div>
+              <div className="col"><p>Gender</p><p>{data.gender || "N/A"}</p></div>
+            </div>
+          )}
+
+          {type === "planets" && (
+            <div className="row text-danger text-center mt-4">
+              <div className="col"><p>Climate</p><p>{data.climate || "N/A"}</p></div>
+              <div className="col"><p>Terrain</p><p>{data.terrain || "N/A"}</p></div>
+              <div className="col"><p>Population</p><p>{data.population || "N/A"}</p></div>
+              <div className="col"><p>Diameter</p><p>{data.diameter || "N/A"}</p></div>
+              <div className="col"><p>Gravity</p><p>{data.gravity || "N/A"}</p></div>
+            </div>
+          )}
+
+          {type === "vehicles" && (
+            <div className="row text-danger text-center mt-4">
+              <div className="col"><p>Model</p><p>{data.model || "N/A"}</p></div>
+              <div className="col"><p>Class</p><p>{data.vehicle_class || "N/A"}</p></div>
+              <div className="col"><p>Manufacturer</p><p>{data.manufacturer || "N/A"}</p></div>
+              <div className="col"><p>Cost</p><p>{data.cost_in_credits || "N/A"}</p></div>
+              <div className="col"><p>Crew</p><p>{data.crew || "N/A"}</p></div>
+            </div>
+          )}
         </div>
       </div>
     </div>
